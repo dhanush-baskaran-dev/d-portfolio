@@ -1,0 +1,526 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Design tokens — SPEC §2.
+
+   Everything visual in the site resolves to a value declared here. There are no
+   ad-hoc hex values and no arbitrary `[13px]`-style utilities in components.
+
+   The accent is the single source of truth for every accent-flavoured value:
+   `--color-accent-subtle` and `--color-accent-glow` are mixes of it, so changing
+   `--color-accent` alone restyles the whole site (SPEC §12.4).
+   ========================================================================== */
+
+@theme {
+  /*
+   * -- Surfaces ----------------------------------------------------------
+   *
+   * Three steps, each one clearly above the last. `surface` is the page and
+   * never moves; `raised` is every card; `overlay` is the inset chips that sit
+   * *inside* a card, so it has to stay a step above `raised` or the brand tiles
+   * in Skills and Achievements flatten into the card they sit on.
+   */
+  --color-surface: #08080a;
+  --color-raised: #17171c;
+  --color-overlay: #212128;
+
+  /*
+   * -- Borders -----------------------------------------------------------
+   *
+   * `strong` moves with `subtle` to preserve the gap between them — at the old
+   * 0.12 it would have been almost indistinguishable from a 0.10 `subtle`.
+   */
+  --color-subtle: rgba(255, 255, 255, 0.1);
+  --color-strong: rgba(255, 255, 255, 0.16);
+
+  /*
+   * -- Text ---------------------------------------------------------------
+   *
+   * Three tiers, all comfortably legible on the dark surface. Measured against
+   * `raised`, which is the worse of the two backgrounds these sit on:
+   *
+   *   primary    0.92  ~16:1   headings, stat values
+   *   secondary  0.82  ~12.6:1 paragraphs and descriptions
+   *   tertiary   0.68  ~9:1    eyebrows, mono captions, dates
+   *
+   * Tertiary has come a long way — it started at 0.4, which measured ~3.6:1 and
+   * sat under the 4.5:1 floor while carrying real content. It is now well past
+   * AA and reads as quiet by choice rather than by being hard to see.
+   *
+   * The ladder is what stops these collapsing into one another. Raising
+   * secondary much further would leave it indistinguishable from primary and
+   * flatten the hierarchy, which costs more legibility than it buys.
+   */
+  --color-primary: rgba(255, 255, 255, 0.92);
+  --color-secondary: rgba(255, 255, 255, 0.82);
+  --color-tertiary: rgba(255, 255, 255, 0.68);
+
+  /* -- Accent — the one accent, and its derivatives ---------------------- */
+  --color-accent: #5b5bd6;
+  /*
+   * SPEC §2 gives the hover state as the literal #6e6ee8. Deriving it instead
+   * is what makes §12.4 true — changing `--color-accent` alone now restyles
+   * every accent-flavoured value. The mix resolves to #6b6bda, three channel
+   * steps off the literal and visually indistinguishable from it.
+   */
+  --color-accent-hover: color-mix(in srgb, var(--color-accent), white 10%);
+  --color-accent-subtle: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  --color-accent-glow: color-mix(in srgb, var(--color-accent) 28%, transparent);
+  /*
+   * The hover border. Reads as "brightening toward the accent" without ever
+   * becoming the accent itself — a full `--color-accent` edge on every hovered
+   * card is the loud version of this treatment (SPEC §4.6).
+   */
+  --color-accent-edge: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  --color-accent-contrast: #ffffff;
+
+  /*
+   * -- Danger — the one failure tone ---------------------------------------
+   *
+   * Derived the same way the accent is, so `--color-danger` alone restyles
+   * every failure-flavoured value. Desaturated well off pure red: on a
+   * near-black surface a full-strength red vibrates, and this has to sit next
+   * to the accent without shouting over it.
+   */
+  --color-danger: #e5646a;
+  --color-danger-subtle: color-mix(in srgb, var(--color-danger) 12%, transparent);
+  --color-danger-edge: color-mix(in srgb, var(--color-danger) 45%, transparent);
+
+  /* -- Glass — one recipe, three permitted surfaces ---------------------- */
+  --color-glass: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-highlight: rgba(255, 255, 255, 0.06);
+
+  /*
+   * -- Glyph tones --------------------------------------------------------
+   *
+   * The stat-card icons, so the grid is not four identical grey marks. Held to
+   * the same muted register as the syntax palette below — saturated enough to
+   * read as distinct hues on the near-black surface, never so loud that they
+   * compete with the accent.
+   */
+  --color-glyph-sky: #6fb3d9;
+  --color-glyph-violet: #a78bda;
+  --color-glyph-teal: #6fc2ab;
+  --color-glyph-amber: #d9a86c;
+
+  /* -- Syntax colours for the hero editor panel -------------------------- */
+  --color-code-keyword: #a78bda;
+  --color-code-type: #7fb8c4;
+  --color-code-property: rgba(255, 255, 255, 0.86);
+  --color-code-string: #c9a476;
+  --color-code-number: #c48b93;
+  --color-code-boolean: #c48b93;
+  --color-code-punctuation: rgba(255, 255, 255, 0.42);
+  --color-code-comment: rgba(255, 255, 255, 0.34);
+
+  /* -- Typography -------------------------------------------------------- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular,
+    "SF Mono", Menlo, monospace;
+
+  --text-eyebrow: 0.8125rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.08em;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+
+  --text-heading: 2rem;
+  --text-heading--line-height: 1.15;
+  --text-heading--letter-spacing: -0.02em;
+  --text-heading--font-weight: 600;
+
+  --text-heading-lg: 2.5rem;
+  --text-heading-lg--line-height: 1.12;
+  --text-heading-lg--letter-spacing: -0.02em;
+  --text-heading-lg--font-weight: 600;
+
+  --text-display-sm: 3.5rem;
+  --text-display-sm--line-height: 1.06;
+  --text-display-sm--letter-spacing: -0.03em;
+  --text-display-sm--font-weight: 600;
+
+  --text-display-md: 4rem;
+  --text-display-md--line-height: 1.05;
+  --text-display-md--letter-spacing: -0.03em;
+  --text-display-md--font-weight: 600;
+
+  --text-display-lg: 4.5rem;
+  --text-display-lg--line-height: 1.04;
+  --text-display-lg--letter-spacing: -0.03em;
+  --text-display-lg--font-weight: 600;
+
+  /* -- Measure ----------------------------------------------------------- */
+  --container-measure: 52ch;
+  --container-prose: 65ch;
+  --container-editor: 30rem;
+
+  /* -- Aspect ratios — every media box declares one, so nothing shifts ---- */
+  --aspect-portrait: 4 / 5;
+
+  /* -- Elevation — ambient only, never harsh, never coloured ------------- */
+  --shadow-ambient: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.24);
+  --shadow-glass: inset 0 1px 0 var(--color-glass-highlight),
+    0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.24);
+
+  /* -- Motion — SPEC §2 motion tokens ------------------------------------ */
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-state: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --duration-micro: 150ms;
+  --duration-standard: 250ms;
+  --duration-entrance: 400ms;
+  --duration-hero: 600ms;
+
+  --gradient-accent-orb: radial-gradient(
+    circle at center,
+    var(--color-accent-glow) 0%,
+    transparent 70%
+  );
+
+  --animate-drift-a: drift-a 26s var(--ease-state) infinite;
+  --animate-drift-b: drift-b 32s var(--ease-state) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-caret: caret 1.1s steps(1, end) infinite;
+
+  /* Preloader: the mark eases in, the rule draws across beneath it. */
+  --animate-preloader-mark: preloader-mark 400ms var(--ease-entrance) both;
+  --animate-preloader-line: preloader-line 1100ms var(--ease-state) both;
+}
+
+/* Hover affordances only on devices that can actually hover (SPEC §4.6). */
+@custom-variant can-hover (@media (hover: hover) and (pointer: fine));
+
+/* ==========================================================================
+   Utilities that a Tailwind class cannot express — the ambient background's
+   three layers (SPEC §5). Each still resolves entirely to theme tokens.
+   ========================================================================== */
+
+/**
+ * Duration utilities.
+ *
+ * Tailwind has no `--duration-*` theme namespace — `duration-*` only accepts a
+ * literal number — so the four motion durations from SPEC §2 are exposed as
+ * named utilities that read the tokens. Components then write `duration-standard`
+ * rather than `duration-250`, and the timing scale stays editable in one place.
+ */
+@utility duration-micro {
+  transition-duration: var(--duration-micro);
+}
+
+@utility duration-standard {
+  transition-duration: var(--duration-standard);
+}
+
+@utility duration-entrance {
+  transition-duration: var(--duration-entrance);
+}
+
+@utility duration-hero {
+  transition-duration: var(--duration-hero);
+}
+
+/**
+ * One of the two drifting page-background orbs. Both are the same size and
+ * differ only in position and opacity, so the recipe is declared once.
+ */
+@utility ambient-orb {
+  background-image: var(--gradient-accent-orb);
+  width: 70vmax;
+  height: 70vmax;
+}
+
+/** The same wash at a caller-chosen size, for the glow behind the hero panel. */
+@utility accent-orb {
+  background-image: var(--gradient-accent-orb);
+}
+
+/** The 24px dot grid, dissolved toward the edges by a radial mask. */
+@utility dot-grid {
+  background-image: radial-gradient(
+    circle at center,
+    var(--color-strong) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  mask-image: radial-gradient(
+    ellipse 75% 60% at 50% 35%,
+    #000 0%,
+    transparent 78%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 75% 60% at 50% 35%,
+    #000 0%,
+    transparent 78%
+  );
+}
+
+/** The mobile skills rail scrolls by snap point; its scrollbar is noise. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/**
+ * Expands a single anchor to cover its positioned ancestor, so a whole card is
+ * clickable through one link rather than by nesting anchors (SPEC §4.6).
+ */
+@utility stretched-link {
+  cursor: pointer;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+  }
+}
+
+/** Cursor-following accent wash on project cards (SPEC §4.6). */
+@utility cursor-glow {
+  background-image: radial-gradient(
+    240px circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+    var(--color-accent-glow) 0%,
+    transparent 70%
+  );
+}
+
+/**
+ * The shared hover glow for interactive surfaces (SPEC §4.6).
+ *
+ * One recipe, so a button, a tab and a card all bloom the same way rather than
+ * each section inventing its own halo. The glow lives on a pseudo-element whose
+ * shadows are declared once and never change — only `opacity` transitions, so
+ * the hover state stays inside the transform/opacity/colour budget and never
+ * repaints a shadow mid-animation.
+ *
+ * Deliberately quiet: a 1px accent ring, a faint inner bloom, and a short outer
+ * wash that reads at the edges and nowhere else. `inset: 0` rather than a
+ * negative inset because the cards that compose this clip to `overflow-hidden`,
+ * and an overhanging ring would simply be cut off.
+ */
+@utility hover-glow {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    box-shadow:
+      inset 0 0 0 1px var(--color-accent-subtle),
+      inset 0 0 24px -10px var(--color-accent-glow),
+      0 6px 28px -14px var(--color-accent-glow);
+    transition: opacity var(--duration-standard) var(--ease-state);
+  }
+
+  /* Hover affordances only where hover exists (SPEC §4.6). */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+
+  /* Keyboard users get the same signal the mouse does. */
+  &:focus-visible::after {
+    opacity: 1;
+  }
+}
+
+/** The same treatment at control scale — buttons, tabs, icon buttons. */
+@utility hover-glow-sm {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    box-shadow:
+      inset 0 0 0 1px var(--color-accent-subtle),
+      0 4px 16px -8px var(--color-accent-glow);
+    transition: opacity var(--duration-standard) var(--ease-state);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible::after {
+    opacity: 1;
+  }
+}
+
+@keyframes drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, 4%, 0) scale(1.08);
+  }
+}
+
+@keyframes drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.04);
+  }
+  50% {
+    transform: translate3d(-5%, -6%, 0) scale(1);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes preloader-mark {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes preloader-line {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   Base layer
+   ========================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-subtle);
+    min-width: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    /* Nothing in the layout may exceed the viewport at any width (SPEC §12.5). */
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-primary);
+    /* Heavy weights read cheap at display sizes (SPEC §2). */
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Never remove an outline without replacing it (SPEC §8). */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-subtle);
+    color: var(--color-primary);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-strong);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-tertiary);
+  }
+}
+
+/* ==========================================================================
+   Reduced motion — SPEC §7.
+
+   A first-class path, not a disable switch: content lands in its final state
+   and only opacity is allowed to transition, capped at 120ms. Components that
+   drive animation from JavaScript additionally consult `useReducedMotionSafe`,
+   and every decorative transform is authored behind Tailwind's `motion-safe`
+   variant so it is never emitted here in the first place.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-property: opacity !important;
+    transition-duration: 120ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}

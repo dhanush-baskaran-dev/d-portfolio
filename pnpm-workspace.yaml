@@ -1,0 +1,10 @@
+# pnpm 11 reads settings from here rather than from package.json.
+#
+# sharp         — the image optimiser next/image uses at build time.
+# unrs-resolver — the native module resolver the ESLint import plugin runs on.
+#
+# Both ship prebuilt binaries; the install script only selects the right one for
+# this platform. Every other package in the tree stays blocked from running one.
+allowBuilds:
+  sharp: true
+  unrs-resolver: true

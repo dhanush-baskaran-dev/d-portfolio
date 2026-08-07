@@ -60,13 +60,27 @@ export function Hero() {
       className="flex min-h-svh items-center"
     >
     
+      {/*
+       * Source order is copy-then-visual, so the `h1` is the first thing in the
+       * document and assistive tech meets the heading before the decoration.
+       * The `order-*` pair only moves the painted boxes: below `lg` the cube
+       * rises above the copy, and at `lg` both reset so the grid's own column
+       * order takes over — copy left, cube right.
+       *
+       * The ordering lives here rather than inside the two children: position
+       * within the hero grid is this component's concern, not theirs.
+       */}
       <div className="grid items-center gap-10 lg:grid-cols-[1.618fr_1fr] lg:gap-14">
-        <HeroCopy headingId={HEADING_ID} socialRow={socialRow} />
+        <div className="order-2 lg:order-1">
+          <HeroCopy headingId={HEADING_ID} socialRow={socialRow} />
+        </div>
 
-        <ErrorBoundary>
-          {/* <HeroEditor /> */}
-          <HeroCube />
-        </ErrorBoundary>
+        <div className="order-1 lg:order-2">
+          <ErrorBoundary>
+            {/* <HeroEditor /> */}
+            <HeroCube />
+          </ErrorBoundary>
+        </div>
       </div>
     </Section>
   );
